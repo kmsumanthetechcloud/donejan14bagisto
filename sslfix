@@ -1,0 +1,4 @@
+docker compose run --rm certbot certonly \
+  --webroot \
+  -w /var/www/certbot \
+  -d v5.waytech.sbs
