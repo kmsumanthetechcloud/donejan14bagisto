@@ -5,3 +5,8 @@ docker exec -it bagisto_app php artisan optimize:clear
 
 
 docker compose up --build -d
+
+
+bagisto install 
+docker exec -it bagisto_app php artisan bagisto:install
+
