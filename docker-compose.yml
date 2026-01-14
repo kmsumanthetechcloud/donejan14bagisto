@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: bagisto_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: suman_db
+      MYSQL_USER: suman_usr
+      MYSQL_PASSWORD: TTC@7890
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bagisto_net
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    image: bagisto:latest
+    container_name: bagisto_app
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www
+      - bagisto_storage:/var/www/storage
+    depends_on:
+      - mysql
+    networks:
+      - bagisto_net
+
+  web:
+    image: nginx:1.25-alpine
+    container_name: bagisto_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./public:/var/www/public
+      - bagisto_storage:/var/www/storage
+      - ./docker/nginx:/etc/nginx/conf.d
+      - ./docker/certbot/www:/var/www/certbot
+      - ./docker/certbot/conf:/etc/letsencrypt
+    depends_on:
+      - app
+    networks:
+      - bagisto_net
+
+volumes:
+  mysql_data:
+  bagisto_storage:
+
+networks:
+  bagisto_net:
+    driver: bridge
