@@ -1,0 +1,16 @@
+server {
+    listen 80;
+    server_name v5.waytech.sbs;
+
+    root /var/www/public;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        allow all;
+    }
+}
